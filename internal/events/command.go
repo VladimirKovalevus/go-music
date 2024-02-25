@@ -4,6 +4,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/faiface/beep"
+	"github.com/faiface/beep/effects"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
 )
@@ -15,7 +17,7 @@ type Command interface {
 type EXIT struct{}
 
 func (EXIT) Exec(e *EventLoop) error {
-	os.Exit(0)
+	e.cancel()
 	return nil
 }
 
@@ -53,5 +55,35 @@ func (t TRACK) Exec(e *EventLoop) error {
 	speaker.Unlock()
 	speaker.Clear()
 	speaker.Play(e.stream)
+	return nil
+}
+
+type VOLUME struct {
+	Amount int32
+}
+
+func (v VOLUME) Exec(e *EventLoop) error {
+
+	// effects.Volume{}
+	e.gain += float64(v.Amount)
+	speaker.Lock()
+	vol := &effects.Volume{Streamer: e.stream, Volume: e.gain / 100, Base: 10}
+	ctrl := &beep.Ctrl{Streamer: vol, Paused: e.paused}
+	speaker.Unlock()
+	speaker.Clear()
+	speaker.Play(ctrl)
+
+	return nil
+}
+
+type StartStop struct {
+}
+
+func (v StartStop) Exec(e *EventLoop) error {
+
+	e.paused = !e.paused
+	ctrl := &beep.Ctrl{Streamer: e.stream, Paused: e.paused}
+	speaker.Clear()
+	speaker.Play(ctrl)
 	return nil
 }

@@ -20,7 +20,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/100))
+	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
 	loop := events.NewEventLoop(streamer, format)
 	loop.Play()
