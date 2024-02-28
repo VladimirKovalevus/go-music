@@ -48,9 +48,9 @@ func (e *EventLoop) DispatchEvents() {
 		fmt.Println(input[0])
 		switch input[0] {
 		case 97:
-			e.commands <- PLAYBACK{Amount: 1}
+			e.commands <- PLAYBACK{Amount: 5}
 		case 100:
-			e.commands <- PLAYBACK{Amount: -1}
+			e.commands <- PLAYBACK{Amount: -5}
 		case 49:
 			e.commands <- TRACK{Name: "resources/syndafloden - мужская любовь.mp3"}
 		case 50:
@@ -68,6 +68,24 @@ func (e *EventLoop) DispatchEvents() {
 			e.commands <- StartStop{}
 		}
 	}
+}
+
+func (e *EventLoop) VolumeEvent(Amount int) {
+	e.commands <- VOLUME{Amount: int32(Amount)}
+}
+
+func (e *EventLoop) PlaybackEvent(Amount int) {
+	e.commands <- PLAYBACK{Amount: int32(Amount)}
+}
+func (e *EventLoop) ExitEvent() {
+	e.commands <- EXIT{}
+}
+func (e *EventLoop) StartStopEvent() {
+	e.commands <- StartStop{}
+}
+func (e *EventLoop) ChangeTrackEvent(file string) {
+	e.commands <- TRACK{Name: file}
+
 }
 func (e *EventLoop) Play() {
 	speaker.Play(e.stream)
