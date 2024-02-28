@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -52,7 +53,6 @@ func main() {
 	btn1 := widget.NewButton("1", func() {
 		loop.ChangeTrackEvent("resources/White Shore - Enjoy the Motion.mp3")
 	})
-
 	btn2 := widget.NewButton("2", func() {
 		loop.ChangeTrackEvent("resources/White Shore - Your Gold.mp3")
 	})
@@ -60,6 +60,19 @@ func main() {
 		loop.ChangeTrackEvent("resources/syndafloden - мужская любовь.mp3")
 	})
 	progg := widget.NewSlider(float64(0), float64(100))
+	progg.OnChanged = func(f float64) {
+		loop.Seek(f / 100)
+		fmt.Println(f / 100)
+	}
+
+	go func() {
+		for {
+			fmt.Println(loop.PercentProgress())
+			time.Sleep(time.Second / 10)
+			progg.SetValue(loop.PercentProgress() * 100)
+		}
+	}()
+
 	w.SetContent(
 		container.NewVBox(
 			container.NewHBox(btnl, label, btnr),

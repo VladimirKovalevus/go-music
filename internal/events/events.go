@@ -70,6 +70,13 @@ func (e *EventLoop) DispatchEvents() {
 	}
 }
 
+func (e *EventLoop) PercentProgress() float64 {
+	return float64(e.stream.Position()) / float64(e.stream.Len())
+}
+func (e *EventLoop) TimeProgress() float64 {
+	return float64(e.stream.Len()) / float64(e.stream.Position())
+}
+
 func (e *EventLoop) VolumeEvent(Amount int) {
 	e.commands <- VOLUME{Amount: int32(Amount)}
 }
@@ -79,6 +86,10 @@ func (e *EventLoop) PlaybackEvent(Amount int) {
 }
 func (e *EventLoop) ExitEvent() {
 	e.commands <- EXIT{}
+}
+func (e *EventLoop) Seek(pos float64) {
+	newPos := int(float64(e.stream.Len()) * pos)
+	e.stream.Seek(newPos)
 }
 func (e *EventLoop) StartStopEvent() {
 	e.commands <- StartStop{}
