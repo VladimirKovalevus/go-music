@@ -16,18 +16,21 @@ import (
 )
 
 func main() {
-
-	f, err := os.Open("resources/syndafloden - мужская любовь.mp3")
+	f, err := os.Open("resources/White Shore - Enjoy the Motion.mp3")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	//  metadata.Parse(f)
+	// meta, err := tag.ReadFrom(f)
+
+	// log.Fatalln(meta)
 	streamer, format, err := mp3.Decode(f)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-
+	speaker.Init(44100, 4410)
 	loop := events.NewEventLoop(streamer, format)
 	loop.Play()
 	// //////////////////////////////
@@ -49,7 +52,6 @@ func main() {
 	btnStop := widget.NewButton("start/stop", func() {
 		loop.StartStopEvent()
 	})
-
 	btn1 := widget.NewButton("1", func() {
 		loop.ChangeTrackEvent("resources/White Shore - Enjoy the Motion.mp3")
 	})
@@ -61,15 +63,22 @@ func main() {
 	})
 	progg := widget.NewSlider(float64(0), float64(100))
 	progg.OnChanged = func(f float64) {
-		loop.Seek(f / 100)
-		fmt.Println(f / 100)
+		loop.Seek(f)
+		// fmt.Println(f)
 	}
+	timelable := widget.NewLabel("123")
+	progg.Step = 0.1
 
 	go func() {
 		for {
-			fmt.Println(loop.PercentProgress())
+			// fmt.Println(loop.PercentProgress())
 			time.Sleep(time.Second / 10)
 			progg.SetValue(loop.PercentProgress() * 100)
+			current, overall := loop.TimeProgress()
+			timelable.SetText(fmt.Sprintf("%02.f:%02d:%02d/%02.f:%02d:%02d",
+				current.Hours(), int(current.Minutes())%60, int(current.Seconds())%60,
+				overall.Hours(), int(overall.Minutes())%60, int(overall.Seconds())%60,
+			))
 		}
 	}()
 
@@ -78,7 +87,7 @@ func main() {
 			container.NewHBox(btnl, label, btnr),
 			btnStop,
 			container.NewHBox(btn1, btn2, btn3),
-			progg),
+			progg, timelable),
 	)
 	w.ShowAndRun()
 }

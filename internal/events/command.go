@@ -26,18 +26,19 @@ type PLAYBACK struct {
 }
 
 func (p PLAYBACK) Exec(e *EventLoop) error {
-
+	speaker.Lock()
+	defer speaker.Unlock()
 	streamer := e.stream
 	format := e.form
 	streamer.Seek(streamer.Position() + format.SampleRate.N(time.Duration(p.Amount)*time.Second))
 	return nil
 }
 
-type TRACK struct {
+type CHANGE_TRACK struct {
 	Name string
 }
 
-func (t TRACK) Exec(e *EventLoop) error {
+func (t CHANGE_TRACK) Exec(e *EventLoop) error {
 
 	f, err := os.Open(t.Name)
 	if err != nil {
@@ -53,7 +54,6 @@ func (t TRACK) Exec(e *EventLoop) error {
 	e.stream = streamer
 	e.form = format
 	speaker.Unlock()
-	speaker.Clear()
 	speaker.Play(e.stream)
 	return nil
 }

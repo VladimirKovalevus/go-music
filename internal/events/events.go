@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math"
+	"time"
 
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
@@ -13,10 +15,10 @@ type EventLoop struct {
 	commands chan Command
 	ctx      context.Context
 	cancel   context.CancelFunc
-	stream   beep.StreamSeekCloser
 	gain     float64
 	paused   bool
 	form     beep.Format
+	stream   beep.StreamSeekCloser
 }
 
 func NewEventLoop(strm beep.StreamSeekCloser, frm beep.Format) *EventLoop {
@@ -37,44 +39,12 @@ func NewEventLoop(strm beep.StreamSeekCloser, frm beep.Format) *EventLoop {
 	}()
 	return loop
 }
-func (e *EventLoop) DispatchEvents() {
-	for {
-		if e := e.ctx.Err(); e != nil {
-			log.Println(e)
-			return
-		}
-		var input string
-		fmt.Scan(&input)
-		fmt.Println(input[0])
-		switch input[0] {
-		case 97:
-			e.commands <- PLAYBACK{Amount: 5}
-		case 100:
-			e.commands <- PLAYBACK{Amount: -5}
-		case 49:
-			e.commands <- TRACK{Name: "resources/syndafloden - мужская любовь.mp3"}
-		case 50:
-			e.commands <- TRACK{Name: "resources/White Shore - Enjoy the Motion.mp3"}
-		case 51:
-			e.commands <- TRACK{Name: "resources/White Shore - Your Gold.mp3"}
-		case 119:
-			e.commands <- VOLUME{5}
-		case 115:
-			e.commands <- VOLUME{-5}
-		case 112:
-			e.commands <- EXIT{}
-			return
-		case 113:
-			e.commands <- StartStop{}
-		}
-	}
-}
 
 func (e *EventLoop) PercentProgress() float64 {
 	return float64(e.stream.Position()) / float64(e.stream.Len())
 }
-func (e *EventLoop) TimeProgress() float64 {
-	return float64(e.stream.Len()) / float64(e.stream.Position())
+func (e *EventLoop) TimeProgress() (time.Duration, time.Duration) {
+	return e.form.SampleRate.D(e.stream.Position()), e.form.SampleRate.D(e.stream.Len())
 }
 
 func (e *EventLoop) VolumeEvent(Amount int) {
@@ -88,15 +58,20 @@ func (e *EventLoop) ExitEvent() {
 	e.commands <- EXIT{}
 }
 func (e *EventLoop) Seek(pos float64) {
-	newPos := int(float64(e.stream.Len()) * pos)
-	e.stream.Seek(newPos)
+	speaker.Lock()
+	defer speaker.Unlock()
+	newPos := int(float64(e.stream.Len()) * pos / 100)
+	fmt.Println(newPos-e.stream.Position(), e.form.SampleRate.N(time.Second))
+	if int(math.Abs(float64(newPos-e.stream.Position()))) < e.form.SampleRate.N(time.Second) {
+		return
+	}
+	e.stream.Seek(e.form.SampleRate.N(e.form.SampleRate.D(newPos)))
 }
 func (e *EventLoop) StartStopEvent() {
 	e.commands <- StartStop{}
 }
 func (e *EventLoop) ChangeTrackEvent(file string) {
-	e.commands <- TRACK{Name: file}
-
+	e.commands <- CHANGE_TRACK{Name: file}
 }
 func (e *EventLoop) Play() {
 	speaker.Play(e.stream)

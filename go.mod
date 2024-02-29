@@ -4,6 +4,7 @@ go 1.21.4
 
 require (
 	fyne.io/fyne/v2 v2.4.4
+	github.com/dhowden/tag v0.0.0-20240122214204-713ab0e94639
 	github.com/faiface/beep v1.1.0
 )
 
