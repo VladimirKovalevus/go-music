@@ -17,16 +17,15 @@ type EventLoop struct {
 	cancel   context.CancelFunc
 	gain     float64
 	paused   bool
-	form     beep.Format
 	stream   beep.StreamSeekCloser
+	form     beep.Format
 }
 
-func NewEventLoop(strm beep.StreamSeekCloser, frm beep.Format) *EventLoop {
+func NewEventLoop() *EventLoop {
 	loop := &EventLoop{}
+	speaker.Init(44100, 4410)
 	loop.commands = make(chan Command, 1)
 	loop.ctx, loop.cancel = context.WithCancel(context.Background())
-	loop.stream = strm
-	loop.form = frm
 	go func() {
 		for {
 			if e := loop.ctx.Err(); e != nil {
@@ -41,10 +40,16 @@ func NewEventLoop(strm beep.StreamSeekCloser, frm beep.Format) *EventLoop {
 }
 
 func (e *EventLoop) PercentProgress() float64 {
-	return float64(e.stream.Position()) / float64(e.stream.Len())
+	if e.stream != nil {
+		return float64(e.stream.Position()) / float64(e.stream.Len())
+	}
+	return 0.0
 }
 func (e *EventLoop) TimeProgress() (time.Duration, time.Duration) {
-	return e.form.SampleRate.D(e.stream.Position()), e.form.SampleRate.D(e.stream.Len())
+	if e.stream != nil {
+		return e.form.SampleRate.D(e.stream.Position()), e.form.SampleRate.D(e.stream.Len())
+	}
+	return 0, 0
 }
 
 func (e *EventLoop) VolumeEvent(Amount int) {
@@ -62,6 +67,8 @@ func (e *EventLoop) Seek(pos float64) {
 	defer speaker.Unlock()
 	newPos := int(float64(e.stream.Len()) * pos / 100)
 	fmt.Println(newPos-e.stream.Position(), e.form.SampleRate.N(time.Second))
+	fmt.Println(newPos, e.stream.Position())
+
 	if int(math.Abs(float64(newPos-e.stream.Position()))) < e.form.SampleRate.N(time.Second) {
 		return
 	}
@@ -74,5 +81,7 @@ func (e *EventLoop) ChangeTrackEvent(file string) {
 	e.commands <- CHANGE_TRACK{Name: file}
 }
 func (e *EventLoop) Play() {
-	speaker.Play(e.stream)
+	if e.stream != nil {
+		speaker.Play(e.stream)
+	}
 }

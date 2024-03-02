@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/dhowden/tag"
+	"github.com/faiface/beep"
 )
 
 type Track interface {
@@ -12,8 +13,7 @@ type Track interface {
 	GetAlbum() string
 	GetArtist() string
 	GetIcon() *tag.Picture
-	GetReader() (io.ReadCloser, error)
-	IsEnd() bool
+	Load() (beep.StreamSeekCloser, chan struct{})
 }
 
 type Metadata struct {
@@ -39,7 +39,6 @@ func (m Metadata) GetIcon() *tag.Picture {
 type LocalTrack struct {
 	Metadata
 	filePath string
-	Done     chan struct{}
 }
 
 func NewLocalTrack(filePath string) *LocalTrack {
@@ -53,7 +52,7 @@ func NewLocalTrack(filePath string) *LocalTrack {
 		myMeta.Artist = meta.Artist()
 		myMeta.Title = meta.Title()
 	}
-	return &LocalTrack{Metadata: myMeta, filePath: filePath, Done: make(chan struct{})}
+	return &LocalTrack{Metadata: myMeta, filePath: filePath}
 }
 
 func (l *LocalTrack) GetReader() (io.ReadCloser, error) {

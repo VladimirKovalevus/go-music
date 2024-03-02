@@ -46,7 +46,9 @@ func (t CHANGE_TRACK) Exec(e *EventLoop) error {
 	}
 	speaker.Lock()
 
-	e.stream.Close()
+	if e.stream != nil {
+		e.stream.Close()
+	}
 	streamer, format, err := mp3.Decode(f)
 	if err != nil {
 		return err
