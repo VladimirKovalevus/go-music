@@ -2,10 +2,10 @@ package playback
 
 import (
 	"io"
+	"log"
 	"os"
 
 	"github.com/dhowden/tag"
-	"github.com/faiface/beep"
 )
 
 type Track interface {
@@ -13,7 +13,8 @@ type Track interface {
 	GetAlbum() string
 	GetArtist() string
 	GetIcon() *tag.Picture
-	Load() (beep.StreamSeekCloser, chan struct{})
+	GetReader() (io.ReadCloser, error)
+	DumpString() string
 }
 
 type Metadata struct {
@@ -43,19 +44,30 @@ type LocalTrack struct {
 
 func NewLocalTrack(filePath string) *LocalTrack {
 	myMeta := Metadata{}
-	f, _ := os.Open(filePath)
-	meta, err := tag.ReadFrom(f)
-	f.Close()
+	f, err := os.Open(filePath)
 	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	meta, err := tag.ReadFrom(f)
+
+	f.Close()
+
+	if err != nil && meta != nil {
+
 		myMeta.Icon = meta.Picture()
 		myMeta.Album = meta.Album()
 		myMeta.Artist = meta.Artist()
 		myMeta.Title = meta.Title()
 	}
+
 	return &LocalTrack{Metadata: myMeta, filePath: filePath}
 }
 
 func (l *LocalTrack) GetReader() (io.ReadCloser, error) {
 	file, err := os.Open(l.filePath)
 	return file, err
+}
+func (l *LocalTrack) DumpString() string {
+	return "OS:" + l.filePath
 }

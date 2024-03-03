@@ -66,7 +66,6 @@ type VOLUME struct {
 
 func (v VOLUME) Exec(e *EventLoop) error {
 
-	// effects.Volume{}
 	e.gain += float64(v.Amount)
 	speaker.Lock()
 	vol := &effects.Volume{Streamer: e.stream, Volume: e.gain / 100, Base: 10}

@@ -6,10 +6,18 @@ import (
 )
 
 type Core struct {
-	e         *events.EventLoop
-	playlists []playback.Playlist
+	*events.EventLoop
+	*playback.Playlist
+	Playlists []*playback.Playlist
 }
 
 func NewCore() *Core {
-	return &Core{e: events.NewEventLoop()}
+	playlists := playback.Parse()
+	return &Core{EventLoop: events.NewEventLoop(), Playlists: playlists, Playlist: playlists[0]}
 }
+
+func (c *Core) SetCurrentPlaylist(i int) {
+	c.Playlist = c.Playlists[i]
+}
+
+// func (c *Core)
