@@ -2,7 +2,6 @@ package events
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"math"
 	"time"
@@ -63,11 +62,12 @@ func (e *EventLoop) ExitEvent() {
 	e.commands <- EXIT{}
 }
 func (e *EventLoop) Seek(pos float64) {
+	if e.stream == nil {
+		return
+	}
 	speaker.Lock()
 	defer speaker.Unlock()
 	newPos := int(float64(e.stream.Len()) * pos / 100)
-	fmt.Println(newPos-e.stream.Position(), e.form.SampleRate.N(time.Second))
-	fmt.Println(newPos, e.stream.Position())
 
 	if int(math.Abs(float64(newPos-e.stream.Position()))) < e.form.SampleRate.N(time.Second) {
 		return

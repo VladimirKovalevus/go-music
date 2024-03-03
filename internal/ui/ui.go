@@ -20,7 +20,6 @@ func Init() {
 	w := a.NewWindow("Syndaudio")
 	w.SetFixedSize(true)
 	w.Resize(fyne.NewSize(400, 200))
-	label := widget.NewLabel("some text")
 
 	btnl := widget.NewButton("left", func() {
 		loop.PlaybackEvent(-5)
@@ -64,8 +63,7 @@ func Init() {
 	w.SetContent(
 		container.NewHBox(
 			container.NewVBox(
-				container.NewHBox(btnl, label, btnr),
-				btnStop,
+				container.NewHBox(btnl, btnStop, btnr),
 				container.NewHBox(btn1, btn2, btn3),
 				progg, timelable),
 		),
