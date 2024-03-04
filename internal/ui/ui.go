@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"fyne.io/fyne"
@@ -15,6 +16,7 @@ import (
 func Init() {
 
 	appCore := core.NewCore()
+	appCore.ShowPlaylist()
 	a := app.New()
 
 	w := a.NewWindow("Syndaudio")
@@ -52,17 +54,17 @@ func Init() {
 		return appCore.PlaylistLen()
 	},
 		func() fyne.CanvasObject {
-			return widget.NewLabel("____")
+			return widget.NewLabel(strings.Repeat("_", 50))
 		},
 		func(i widget.ListItemID, o fyne.CanvasObject) {
 			trck, err := appCore.GetPlaylistItem(i)
 			if err != nil {
 				log.Println(err)
 			}
-			o.(*widget.Label).SetText(trck.GetName())
+			o.(*widget.Label).SetText(trck.Title())
 		},
 	)
-
+	fmt.Println(appCore.PlaylistLen())
 	go func() {
 		for {
 			time.Sleep(time.Second / 10)
@@ -77,6 +79,7 @@ func Init() {
 
 	w.SetContent(
 		container.NewHBox(
+
 			container.NewVBox(
 				container.NewHBox(btnl, btnStop, btnr),
 				container.NewHBox(btn1, btn2, btn3),
@@ -84,5 +87,7 @@ func Init() {
 			list,
 		),
 	)
+	// w.SetContent(list)
+
 	w.ShowAndRun()
 }

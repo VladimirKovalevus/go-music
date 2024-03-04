@@ -4,37 +4,38 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/dhowden/tag"
 )
 
 type Track interface {
-	GetName() string
-	GetAlbum() string
-	GetArtist() string
-	GetIcon() *tag.Picture
-	GetReader() (io.ReadCloser, error)
+	Title() string
+	Album() string
+	Artist() string
+	Icon() *tag.Picture
+	Reader() (io.ReadCloser, error)
 	DumpString() string
 }
 
 type Metadata struct {
-	Title  string
-	Album  string
-	Artist string
-	Icon   *tag.Picture
+	title  string
+	album  string
+	artist string
+	icon   *tag.Picture
 }
 
-func (m Metadata) GetName() string {
-	return m.Title
+func (m Metadata) Title() string {
+	return m.title
 }
-func (m Metadata) GetAlbum() string {
-	return m.Album
+func (m Metadata) Album() string {
+	return m.album
 }
-func (m Metadata) GetArtist() string {
-	return m.Artist
+func (m Metadata) Artist() string {
+	return m.artist
 }
-func (m Metadata) GetIcon() *tag.Picture {
-	return m.Icon
+func (m Metadata) Icon() *tag.Picture {
+	return m.icon
 }
 
 type LocalTrack struct {
@@ -53,18 +54,22 @@ func NewLocalTrack(filePath string) *LocalTrack {
 
 	f.Close()
 
-	if err != nil && meta != nil {
+	if err == nil && meta != nil {
 
-		myMeta.Icon = meta.Picture()
-		myMeta.Album = meta.Album()
-		myMeta.Artist = meta.Artist()
-		myMeta.Title = meta.Title()
+		myMeta.icon = meta.Picture()
+		myMeta.album = meta.Album()
+		myMeta.artist = meta.Artist()
+		myMeta.title = meta.Title()
+	} else {
+		ind := strings.LastIndex(filePath, "/")
+		myMeta.title = filePath[ind+1:]
+		myMeta.artist = "Download"
+		myMeta.album = "Unknown"
 	}
-
 	return &LocalTrack{Metadata: myMeta, filePath: filePath}
 }
 
-func (l *LocalTrack) GetReader() (io.ReadCloser, error) {
+func (l *LocalTrack) Reader() (io.ReadCloser, error) {
 	file, err := os.Open(l.filePath)
 	return file, err
 }

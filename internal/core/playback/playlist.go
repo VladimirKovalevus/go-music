@@ -10,15 +10,10 @@ import (
 const CONF_PATH = "."
 
 type Playlist struct {
-	list     []Track
-	length   int
-	position int
-	Name     string
+	list []Track
+	Name string
 }
 
-func (p *Playlist) Next() bool {
-	return p.position < p.length-1
-}
 func (p *Playlist) Add(tracks ...Track) {
 	p.list = append(p.list, tracks...)
 }
@@ -38,13 +33,13 @@ func (p *Playlist) PlaylistLen() int {
 	if p == nil {
 		return 0
 	}
-	return p.length
+	return len(p.list)
 }
 func (p *Playlist) GetPlaylistItem(i int) (Track, error) {
 	if p == nil {
 		return nil, fmt.Errorf("empty playlist")
 	}
-	if i > p.length || i < 0 {
+	if i > len(p.list) || i < 0 {
 		return nil, fmt.Errorf("out of bounds")
 	}
 	return p.list[i], nil
@@ -70,7 +65,6 @@ func Parse() []*Playlist {
 			play = append(play, &playlist)
 		}
 	}
-	fmt.Printf("%#v", play[0])
 	return play
 }
 
