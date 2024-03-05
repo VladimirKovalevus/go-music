@@ -24,5 +24,3 @@ func (c *Core) ShowPlaylist() {
 func (c *Core) SetCurrentPlaylist(i int) {
 	c.Playlist = c.Playlists[i]
 }
-
-// func (c *Core)

@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/VladimirKovalevus/go-music/internal/core/playback"
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/effects"
 	"github.com/faiface/beep/mp3"
@@ -50,6 +51,31 @@ func (t CHANGE_TRACK) Exec(e *EventLoop) error {
 		e.stream.Close()
 	}
 	streamer, format, err := mp3.Decode(f)
+	if err != nil {
+		return err
+	}
+	e.stream = streamer
+	e.form = format
+	speaker.Unlock()
+	speaker.Play(e.stream)
+	return nil
+}
+
+type TRCK struct {
+	track playback.Track
+}
+
+func (t TRCK) Exec(e *EventLoop) error {
+	reader, err := t.track.Reader()
+	if err != nil {
+		return err
+	}
+	speaker.Lock()
+
+	if e.stream != nil {
+		e.stream.Close()
+	}
+	streamer, format, err := mp3.Decode(reader)
 	if err != nil {
 		return err
 	}
