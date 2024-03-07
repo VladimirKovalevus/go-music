@@ -16,6 +16,7 @@ type Track interface {
 	Icon() *tag.Picture
 	Reader() (io.ReadCloser, error)
 	DumpString() string
+	Source() (string, string)
 }
 
 type Metadata struct {
@@ -75,4 +76,7 @@ func (l *LocalTrack) Reader() (io.ReadCloser, error) {
 }
 func (l *LocalTrack) DumpString() string {
 	return "OS:" + l.filePath
+}
+func (l *LocalTrack) Source() (string, string) {
+	return "OS", l.filePath
 }
