@@ -14,7 +14,6 @@ import (
 )
 
 func Init() {
-
 	appCore := core.NewCore()
 	appCore.ShowPlaylist()
 	a := app.New()
