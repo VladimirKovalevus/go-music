@@ -1,0 +1,26 @@
+syntax="proto3";
+
+
+
+
+package MusicService;
+
+
+service MusicService{
+    rpc fetchTrack(send) returns (rec){}
+}
+
+message send{
+    string track_name=1;
+    int32  index=2;
+    int32  second=3;
+}
+message rec{
+    bytes buffer=1;
+    format fmt =2;
+}
+message format{
+    int32 bitrate=1;
+    int32 channels=2;
+}
+
