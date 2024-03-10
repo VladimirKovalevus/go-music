@@ -11,6 +11,12 @@ type ExternalTrack struct {
 	url    string
 }
 
+type Data struct {
+	Buffer          []byte
+	BlockSize       int64
+	FetchedIndicies []bool
+}
+
 func (e *ExternalTrack) Source() (string, string) {
 	return e.source, e.url
 }
@@ -26,5 +32,6 @@ func (e *ExternalTrack) DumpString() string {
 
 func (e *ExternalTrack) fetchUrl() (io.ReadSeekCloser, error) {
 	//TODO
+
 	return nil, nil
 }
