@@ -13,6 +13,15 @@ import (
 	"github.com/VladimirKovalevus/go-music/internal/core"
 )
 
+type UI struct {
+	TrackList     fyne.CanvasObject
+	Playlists     fyne.CanvasObject
+	StopStart     fyne.CanvasObject
+	PreviousTrack fyne.CanvasObject
+	NextTrack     fyne.CanvasObject
+	TrackInfo     fyne.CanvasObject
+}
+
 func Init() {
 	appCore := core.NewCore()
 	appCore.ShowPlaylist()

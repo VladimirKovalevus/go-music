@@ -7,6 +7,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/VladimirKovalevus/go-music/internal/core/playback"
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
 )
@@ -80,6 +81,9 @@ func (e *EventLoop) StartStopEvent() {
 }
 func (e *EventLoop) ChangeTrackEvent(file string) {
 	e.commands <- CHANGE_TRACK{Name: file}
+}
+func (e *EventLoop) TrackEvent(t playback.Track) {
+	e.commands <- TRCK{track: t}
 }
 func (e *EventLoop) Play() {
 	if e.stream != nil {

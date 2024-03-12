@@ -1,10 +1,16 @@
 package ui
 
 import (
+	"fyne.io/fyne"
+	"fyne.io/fyne/container"
+	"fyne.io/fyne/widget"
+	"github.com/VladimirKovalevus/go-music/internal/core/events"
 	"github.com/VladimirKovalevus/go-music/internal/core/playback"
 )
 
-func NewTrackLayout(t *playback.Track) {
-	// btn := widget.NewButtonWithIcon("")
-	// container.NewHBox()
+func NewTrackLayout(t playback.Track, e *events.EventLoop) fyne.CanvasObject {
+	btn := widget.NewButton(t.Title(), func() {
+		e.TrackEvent(t)
+	})
+	return container.NewHBox(btn)
 }

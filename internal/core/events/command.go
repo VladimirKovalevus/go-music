@@ -1,6 +1,7 @@
 package events
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -27,6 +28,9 @@ type PLAYBACK struct {
 }
 
 func (p PLAYBACK) Exec(e *EventLoop) error {
+	if e.stream == nil {
+		return fmt.Errorf("empty stream")
+	}
 	speaker.Lock()
 	defer speaker.Unlock()
 	streamer := e.stream
