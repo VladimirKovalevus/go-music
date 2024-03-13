@@ -56,13 +56,13 @@ func (p *Playlist) DumpFile() error {
 	return f.Close()
 }
 
-func Parse() []*Playlist {
-	var play []*Playlist
+func Parse() []Playlist {
+	var play []Playlist
 	dirs, _ := os.ReadDir(CONF_PATH)
 	for _, dir := range dirs {
 		if strings.HasSuffix(dir.Name(), ".spl") {
 			playlist := parse(dir.Name())
-			play = append(play, &playlist)
+			play = append(play, playlist)
 		}
 	}
 	return play
