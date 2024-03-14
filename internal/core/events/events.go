@@ -88,5 +88,7 @@ func (e *EventLoop) TrackEvent(t playback.Track) {
 func (e *EventLoop) Play() {
 	if e.stream != nil {
 		speaker.Play(e.stream)
+	} else {
+		speaker.Clear()
 	}
 }

@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fyne.io/fyne"
-	"fyne.io/fyne/widget"
 	"github.com/VladimirKovalevus/go-music/internal/core/events"
 	"github.com/VladimirKovalevus/go-music/internal/core/playback"
 )
@@ -25,6 +24,6 @@ type UI struct {
 }
 
 func Init() {
-	ui := UI{EventLoop: events.NewEventLoop(), Playlist: playback.Parse()}
-	widget.NewList()
+	// ui := UI{EventLoop: events.NewEventLoop(), Playlist: playback.Parse()}
+	// widget.NewList()
 }
