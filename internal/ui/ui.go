@@ -2,7 +2,7 @@ package ui
 
 import (
 	"fyne.io/fyne"
-	"github.com/VladimirKovalevus/go-music/internal/core/events"
+	"github.com/VladimirKovalevus/go-music/internal/core"
 	"github.com/VladimirKovalevus/go-music/internal/core/playback"
 )
 
@@ -19,7 +19,7 @@ type UI struct {
 	PreviousTrack fyne.CanvasObject
 	NextTrack     fyne.CanvasObject
 	TrackInfo     fyne.CanvasObject
-	EventLoop     *events.EventLoop
+	Core          core.Core
 	Playlist      []playback.Playlist
 }
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/dhowden/tag"
+	"github.com/faiface/beep"
 )
 
 type Track interface {
@@ -15,6 +16,7 @@ type Track interface {
 	Artist() string
 	Icon() *tag.Picture
 	Reader() (io.ReadCloser, error)
+	Stream() (beep.StreamSeekCloser, error)
 	DumpString() string
 	Source() (string, string)
 }
@@ -73,6 +75,9 @@ func NewLocalTrack(filePath string) *LocalTrack {
 func (l *LocalTrack) Reader() (io.ReadCloser, error) {
 	file, err := os.Open(l.filePath)
 	return file, err
+}
+func (l *LocalTrack) Stream() (beep.StreamSeekCloser, error) {
+	return nil, nil
 }
 func (l *LocalTrack) DumpString() string {
 	return "OS:" + l.filePath

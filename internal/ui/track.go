@@ -10,7 +10,6 @@ import (
 
 func NewTrackLayout(t playback.Track, e *events.EventLoop) fyne.CanvasObject {
 	btn := widget.NewButton(t.Title(), func() {
-		e.TrackEvent(t)
 	})
 	return container.NewHBox(btn)
 }

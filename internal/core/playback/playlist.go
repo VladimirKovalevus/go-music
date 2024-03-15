@@ -56,6 +56,13 @@ func (p *Playlist) DumpFile() error {
 	return f.Close()
 }
 
+func (p *Playlist) TracksFromIndex(i int) []Track {
+	if i >= len(p.list) || i < 0 {
+		return nil
+	}
+	return p.list[i:]
+}
+
 func Parse() []Playlist {
 	var play []Playlist
 	dirs, _ := os.ReadDir(CONF_PATH)

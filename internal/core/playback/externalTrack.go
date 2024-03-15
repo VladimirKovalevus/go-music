@@ -3,6 +3,8 @@ package playback
 import (
 	"fmt"
 	"io"
+
+	"github.com/faiface/beep"
 )
 
 type ExternalTrack struct {
@@ -25,13 +27,19 @@ func (e *ExternalTrack) Reader() (io.ReadSeekCloser, error) {
 	file, err := e.fetchUrl()
 	return file, err
 }
+func (e *ExternalTrack) Stream() (beep.StreamSeekCloser, error) {
+	file, err := e.fetchStreamUrl()
+	return file, err
+}
 
 func (e *ExternalTrack) DumpString() string {
 	return fmt.Sprintf("%s:%s", e.source, e.url)
 }
 
 func (e *ExternalTrack) fetchUrl() (io.ReadSeekCloser, error) {
-	//TODO
 
+	return nil, nil
+}
+func (e *ExternalTrack) fetchStreamUrl() (beep.StreamSeekCloser, error) {
 	return nil, nil
 }

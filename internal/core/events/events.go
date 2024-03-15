@@ -7,7 +7,6 @@ import (
 	"math"
 	"time"
 
-	"github.com/VladimirKovalevus/go-music/internal/core/playback"
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
 )
@@ -60,9 +59,11 @@ func (e *EventLoop) VolumeEvent(Amount int) {
 func (e *EventLoop) PlaybackEvent(Amount int) {
 	e.commands <- PLAYBACK{Amount: int32(Amount)}
 }
+
 func (e *EventLoop) ExitEvent() {
 	e.commands <- EXIT{}
 }
+
 func (e *EventLoop) Seek(pos float64) {
 	if e.stream == nil {
 		return
@@ -79,16 +80,8 @@ func (e *EventLoop) Seek(pos float64) {
 func (e *EventLoop) StartStopEvent() {
 	e.commands <- StartStop{}
 }
-func (e *EventLoop) ChangeTrackEvent(file string) {
-	e.commands <- CHANGE_TRACK{Name: file}
-}
-func (e *EventLoop) TrackEvent(t playback.Track) {
-	e.commands <- TRCK{track: t}
-}
-func (e *EventLoop) Play() {
-	if e.stream != nil {
-		speaker.Play(e.stream)
-	} else {
-		speaker.Clear()
-	}
+
+func (e *EventLoop) Play(stream beep.Streamer) {
+	speaker.Clear()
+	speaker.Play(stream)
 }
