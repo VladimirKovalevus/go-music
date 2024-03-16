@@ -21,6 +21,7 @@ type UI struct {
 	TrackInfo     fyne.CanvasObject
 	Core          core.Core
 	Playlist      []playback.Playlist
+	CurrentIndex  uint32
 }
 
 func Init() {
