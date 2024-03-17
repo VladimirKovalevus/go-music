@@ -6,25 +6,25 @@ import (
 	"github.com/VladimirKovalevus/go-music/internal/core/playback"
 )
 
-type UI_CONTROLLER interface {
-	AddTrack(t playback.Track, p *playback.Playlist) bool
-	RemoveTrack(t playback.Track, p *playback.Playlist) bool
-	NewPlaylist(name string) bool
-}
-
 type UI struct {
-	TrackList     fyne.CanvasObject
-	Playlists     fyne.CanvasObject
-	StopStart     fyne.CanvasObject
-	PreviousTrack fyne.CanvasObject
-	NextTrack     fyne.CanvasObject
-	TrackInfo     fyne.CanvasObject
-	Core          core.Core
-	Playlist      []playback.Playlist
-	CurrentIndex  uint32
+	TrackList       fyne.CanvasObject
+	Playlists       fyne.CanvasObject
+	StopStart       fyne.CanvasObject
+	PreviousTrack   fyne.CanvasObject
+	NextTrack       fyne.CanvasObject
+	TrackInfo       fyne.CanvasObject
+	Core            core.Core
+	Playlist        []playback.Playlist
+	CurrentPlaylist uint32
 }
 
-func Init() {
-	// ui := UI{EventLoop: events.NewEventLoop(), Playlist: playback.Parse()}
-	// widget.NewList()
+func (u *UI) SelectPlaylist() {
+}
+
+func (u *UI) ReloadTracks() {
+
+}
+
+func Init() UI {
+	return UI{}
 }
