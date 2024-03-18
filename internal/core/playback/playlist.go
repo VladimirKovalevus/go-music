@@ -10,8 +10,9 @@ import (
 const CONF_PATH = "."
 
 type Playlist struct {
-	list []Track
-	Name string
+	list     []Track
+	Name     string
+	IconPath string
 }
 
 func (p *Playlist) Add(tracks ...Track) {

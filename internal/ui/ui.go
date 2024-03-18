@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/widget"
 	"github.com/VladimirKovalevus/go-music/internal/core"
 	"github.com/VladimirKovalevus/go-music/internal/core/playback"
+	"github.com/VladimirKovalevus/go-music/internal/ui/widgets"
 )
 
 type UI struct {
@@ -26,6 +28,9 @@ func (u *UI) ReloadTracks() {
 }
 func (u *UI) NewPlayList(name string, icon []byte) {
 }
+func (u *UI) PlaylistCount() int {
+	return len(u.Playlist)
+}
 func (u *UI) AddTrackToPlaylist(p *playback.Playlist, t *playback.Track) {
 }
 func (u *UI) NextTrack() {
@@ -38,7 +43,17 @@ func (u *UI) StopStart() {
 	fmt.Println(u.stopStart)
 }
 
-func NewUi() UI {
-	// widget.NewList()
-	return UI{}
+func NewUi(c *core.Core) *UI {
+	ui := &UI{}
+	playlists := widget.NewList(func() int {
+		return ui.PlaylistCount()
+	}, func() fyne.CanvasObject {
+		return widgets.NewWidget()
+	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
+		play := ui.Playlist[lii]
+		text, icon := play.Name, play.IconPath
+		co.(*widgets.PlaylistWidget).Update(text, icon)
+	})
+	ui.Playlists = playlists
+	return ui
 }
