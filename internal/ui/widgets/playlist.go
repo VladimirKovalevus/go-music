@@ -7,8 +7,8 @@ import (
 
 type PlaylistWidget struct {
 	widget.BaseWidget
-	title *widget.Label
-	icon  *widget.Icon
+	title  *widget.Label
+	button *widget.Button
 }
 
 func NewWidget() *PlaylistWidget {
@@ -16,10 +16,11 @@ func NewWidget() *PlaylistWidget {
 	return pw
 }
 
-func (p *PlaylistWidget) Update(title string, icon string) {
+func (p *PlaylistWidget) Update(title string, icon string, callback func()) {
 	resource, err := fyne.LoadResourceFromPath(icon)
 	if err == nil {
-		p.icon.SetResource(resource)
+		p.button.SetIcon(resource)
+		p.button.OnTapped = callback
 	}
 	p.title.SetText(title)
 }

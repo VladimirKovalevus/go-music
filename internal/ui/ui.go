@@ -52,7 +52,10 @@ func NewUi(c *core.Core) *UI {
 	}, func(lii widget.ListItemID, co fyne.CanvasObject) {
 		play := ui.Playlist[lii]
 		text, icon := play.Name, play.IconPath
-		co.(*widgets.PlaylistWidget).Update(text, icon)
+		callback := func() {
+			ui.Core.Play(play, lii)
+		}
+		co.(*widgets.PlaylistWidget).Update(text, icon, callback)
 	})
 	ui.Playlists = playlists
 	return ui
